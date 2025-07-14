@@ -1,0 +1,29 @@
+alias: "5 mins before Sunrise"
+description: "turn off any outdoor lights just before sunrise"
+triggers: #using built in trigger to know where the sun is based on the Lat/Long set via "Zones" in HA
+  - trigger: sun
+    event: sunrise
+    offset: "-00:05:00" #set to negative here to indicate 5 minutes before sunrise
+conditions: []
+actions: #turn off any outdoor lights (devices)
+  - type: turn_off
+    device_id: 123abc
+    entity_id: 456def
+    domain: switch
+  - type: turn_off
+    device_id: 789ghi
+    entity_id: 012jkl
+    domain: switch
+  - type: turn_off
+    device_id: 123mno
+    entity_id: pqr456
+    domain: switch
+  - type: turn_off
+    device_id: stu789
+    entity_id: 012vwx
+    domain: switch
+  - type: turn_off
+    device_id: yz456
+    entity_id: 78901
+    domain: switch
+mode: single
