@@ -11,3 +11,6 @@ Description of each:
 
 <a href="https://github.com/neilschreiner/HomeAssistantAutomations/blob/main/PackageAtTheFrontDoor.yaml">PackageAtTheFrontDoor.yaml</a>
   - If a camera detects a package then this makes an annoucment on several speakers around the house.
+
+<a href="https://github.com/neilschreiner/HomeAssistantAutomations/blob/main/5MinsBeforeSunrise.yaml">5MinsBeforeSunrise.yaml</a>
+  - Using Lat/Long settings in Home Assistant, turn off any outdoor lights 5 minutes before sunrise.
