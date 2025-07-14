@@ -11,7 +11,7 @@ conditions: #only run check between these hours
     after: "09:00:00"
     before: "21:00:00"
 actions:
-  - variables:
+  - variables: #got help from d921 dominic on https://community.home-assistant.io/
       low_sensors: >
         {# a dictionary of sensor entity_ids to be monitored, identifying sensor
         locations #} {% 
@@ -44,7 +44,7 @@ actions:
         phrase }}
       message: >
         The following {{phrase}} a battery level below 25 percent:
-        {{low_sensors|join(', ')}} .  Please replace them. 
+        {{low_sensors|join(', ')}} .  Please replace them.
   - if: #check if a low battery was round
       - condition: template
         value_template: "{{low_sensors | length | bool}}"
