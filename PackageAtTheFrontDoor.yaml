@@ -1,0 +1,37 @@
+alias: Package at front door announcement
+description: "Make an announcement when a package is detected at the front door"
+triggers: #activate when either device detects a package
+  - type: turned_on
+    device_id: abc123 #device ID 1
+    entity_id: def456 #package detection event for device 1
+    domain: binary_sensor
+    trigger: device
+  - type: turned_on
+    device_id: ghi789 #device ID 2
+    entity_id: jkl012 #package detection event for device 2
+    domain: binary_sensor
+    trigger: device
+conditions: []
+actions:
+  - action: tts.cloud_say
+    metadata: {}
+    data:
+      cache: false
+      entity_id: media_player.home_assistant_voice #announce on the HA speaker
+      message: Hooray!  There's a package at the front door.
+      language: en-GB
+  - action: tts.google_translate_say
+    metadata: {}
+    data:
+      cache: false
+      entity_id: media_player.google_home_max #announce on a Google Home
+      message: Hooray!  There's a package at the front door.
+      language: en-uk
+  - action: tts.google_translate_say
+    metadata: {}
+    data:
+      cache: false
+      entity_id: media_player.google_bedroom_display #annouce on another Google home
+      message: Hooray!  There's a package at the front door.
+      language: en-uk
+mode: single
