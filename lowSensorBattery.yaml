@@ -1,0 +1,64 @@
+alias: Sensor battery below 25% alert monitor
+description: >-
+  Between the hours of 9 AM and 9 PM check every two hours if any door sensor
+  battery is below 25%
+triggers: #every other hour run this check
+  - hours: /2
+    minutes: "00"
+    trigger: time_pattern
+conditions: #only run check between these hours
+  - condition: time
+    after: "09:00:00"
+    before: "21:00:00"
+actions:
+  - variables:
+      low_sensors: >
+        {# a dictionary of sensor entity_ids to be monitored, identifying sensor
+        locations #} {% 
+            set all_sensors = {
+              'sensor.patio_door_sensor_battery' : 'patio door sensor',
+              'sensor.mudroom_door_sensor_battery' : 'mudroom door sensor',
+              'sensor.entryway_door_sensor_battery' : 'entryway door sensor',
+              'sensor.basement_storage_door_battery' : 'basement storage door sensor',
+              'sensor.master_bed_lights_button_1_battery' : 'bedroom button one',
+              'sensor.master_bed_lights_button_2_battery' : 'bedroom button two'
+                              }
+        %}
+
+        {# build the list NS.low_sensors #} {% set NS =
+        namespace(low_sensors=[]) %} {% for sensor in all_sensors.keys() %}
+          {% if states(sensor)|int(0) <= 25 %}
+            {% set NS.low_sensors = NS.low_sensors + [all_sensors[sensor]] %}
+          {% endif %}
+        {% endfor %}           {% set low_sensors = NS.low_sensors %}
+
+        {# print the list so the YAML binds it to the low_sensors variable #} {{
+        low_sensors }}
+      phrase: >
+        {% set NS = namespace(phrase="device has") %} {% if low_sensors | length
+        > 1 %}
+          {% set NS.phrase = low_sensors|length|string + " devices have" %}
+        {% endif %} {% set phrase = NS.phrase %}
+
+        {# print the string so the YAML binds it to the phrase variable #} {{
+        phrase }}
+      message: >
+        The following {{phrase}} a battery level below 25 percent:
+        {{low_sensors|join(', ')}} .  Please replace them. 
+  - if: #check if a low battery was round
+      - condition: template
+        value_template: "{{low_sensors | length | bool}}"
+    then: #annouce when a low battery was found
+      - action: tts.cloud_say
+        metadata: {}
+        data:
+          cache: false
+          entity_id: media_player.home_assistant_voice_09b642_media_player #annouce on the HA speaker
+          message: "{{ message }}"
+      - action: tts.google_translate_say
+        metadata: {}
+        data:
+          cache: false
+          entity_id: media_player.kitchen_home_max #announce on the Google Home speaker
+          message: "{{ message }}"
+mode: single
