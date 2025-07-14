@@ -1,0 +1,45 @@
+alias: Close front shades when it's hot out
+description: ""
+triggers:
+  - trigger: time_pattern
+    minutes: /15
+conditions:
+  - condition: state
+    entity_id: weather.myhouse #retrieved from Open-Meteo Solar Forecast HACS integration
+    state: sunny
+  - condition: numeric_state
+    entity_id: weather.myhouse #retrieved from Open-Meteo Solar Forecast HACS integration
+    attribute: temperature
+    above: 82
+  - condition: time
+    after: "15:00:00"
+    before: "18:00:00"
+  - condition: device
+    device_id: ABC1234567890 #device id of the shade 
+    domain: cover
+    entity_id: abc0987654321 #entity id of the shade
+    type: is_position #check if the shade is above 5% closed. if not then do nothing
+    above: 5
+actions:
+  - action: tts.speak
+    metadata: {}
+    data:
+      cache: true
+      media_player_entity_id: media_player.home_assistant_voice #make announcement on HA speaker
+      options:
+        voice: en_GB-northern_english_male-medium
+      message: Phew. It's too hot out. I'll close the front shade.
+    target:
+      entity_id: tts.piper
+  - action: tts.google_translate_say
+    metadata: {}
+    data:
+      cache: false
+      entity_id: media_player.google_home  #make announcement on Google speaker
+      message: Phew. It's too hot out. I'll close the front shade.
+      language: en-uk
+  - device_id: ABC1234567890
+    domain: cover
+    entity_id: abc0987654321
+    type: close #close the shade
+mode: single
